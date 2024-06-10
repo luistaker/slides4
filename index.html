@@ -55,6 +55,7 @@
       height: auto;
       max-height: 100%;
       object-fit: cover;
+      cursor: pointer; /* Cambiado a cursor de puntero */
     }
 
     .slide.current {
@@ -170,6 +171,27 @@
     if (auto) {
       slideInterval = setInterval(nextSlide, intervalTime);
     }
+
+    // Función para abrir la imagen en pantalla completa
+    const openFullscreen = (element) => {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) { // Firefox
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) { // Chrome, Safari y Opera
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) { // IE/Edge
+        element.msRequestFullscreen();
+      }
+    };
+
+    // Añadir evento de clic a cada imagen
+    slides.forEach(slide => {
+      const img = slide.querySelector("img");
+      img.addEventListener("click", () => {
+        openFullscreen(img);
+      });
+    });
   </script>
 </body>
 
