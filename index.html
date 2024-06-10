@@ -7,7 +7,111 @@
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css'>
   <link rel="stylesheet" href="./style.css">
   <style>
-    /* Estilos CSS existentes... */
+    @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap");
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Lexend", sans-serif;
+      background-color: transparent; /* Cambiado a transparente */
+      color: #e5ebf3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: transparent; /* Cambiado a transparente */
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slide img {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+      object-fit: cover;
+      cursor: pointer; /* Cambiado a cursor de puntero */
+    }
+
+    .slide.current {
+      opacity: 1;
+    }
+
+    .buttons button {
+      position: absolute;
+      top: 50%;
+      border: 2px solid #e5ebf3;
+      background-color: transparent;
+      color: #e5ebf3;
+      cursor: pointer;
+      padding: 13px 15px;
+      border-radius: 50%;
+      outline: none;
+      transform: translateY(-50%);
+    }
+
+    .buttons button:hover {
+      background-color: #e5ebf3;
+      color: #362a2b;
+    }
+
+    .buttons button#prev {
+      left: 1rem;
+    }
+
+    .buttons button#next {
+      right: 1rem;
+    }
+
+    @media (min-width: 640px) and (min-height: 640px) {
+      .slide .content {
+        bottom: 70px;
+        left: -600px;
+        width: 600px;
+        padding: 2rem;
+        line-height: 1.6;
+      }
+
+      .slide .content h1 {
+        font-size: 2rem;
+      }
+
+      .slide.current .content {
+        transform: translateX(600px);
+      }
+    }
+
+    /* Estilos para pantalla completa */
+    .fullscreen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   </style>
 </head>
 
@@ -55,38 +159,84 @@
       }
     };
 
+    const startSlideInterval = () => {
+      if (auto) {
+        slideInterval = setInterval(nextSlide, intervalTime);
+      }
+    };
+
+    const stopSlideInterval = () => {
+      clearInterval(slideInterval);
+    };
+
     nextButton.addEventListener("click", () => {
       nextSlide();
       if (auto) {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, intervalTime);
+        stopSlideInterval();
+        startSlideInterval();
       }
     });
 
     prevButton.addEventListener("click", () => {
       prevSlide();
       if (auto) {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, intervalTime);
+        stopSlideInterval();
+        startSlideInterval();
       }
     });
 
-    // Agregar evento mouseover y mouseout a cada elemento .slide
     slides.forEach(slide => {
-      slide.addEventListener("mouseover", () => {
-        clearInterval(slideInterval); // Detener el intervalo cuando el mouse está sobre la imagen
+      const img = slide.querySelector("img");
+      img.addEventListener("mouseenter", stopSlideInterval);
+      img.addEventListener("mouseleave", startSlideInterval);
+
+      // Función para abrir la imagen en pantalla completa
+      const openFullscreen = (element) => {
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) { // Firefox
+          element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) { // Chrome, Safari y Opera
+          element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) { // IE/Edge
+          element.msRequestFullscreen();
+        }
+
+        // Agregar clase para estilos de pantalla completa
+        element.classList.add('fullscreen-img');
+      };
+
+      img.addEventListener("click", () => {
+        openFullscreen(img);
       });
 
-      slide.addEventListener("mouseout", () => {
-        if (auto) {
-          slideInterval = setInterval(nextSlide, intervalTime); // Reiniciar el intervalo cuando el mouse sale de la imagen
+      // Remover clase fullscreen-img cuando se sale del modo pantalla completa
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+          img.classList.remove('fullscreen-img');
+        }
+      });
+
+      document.addEventListener('mozfullscreenchange', () => {
+        if (!document.mozFullScreenElement) {
+          img.classList.remove('fullscreen-img');
+        }
+      });
+
+      document.addEventListener('webkitfullscreenchange', () => {
+        if (!document.webkitFullscreenElement) {
+          img.classList.remove('fullscreen-img');
+        }
+      });
+
+      document.addEventListener('msfullscreenchange', () => {
+        if (!document.msFullscreenElement) {
+          img.classList.remove('fullscreen-img');
         }
       });
     });
 
-    if (auto) {
-      slideInterval = setInterval(nextSlide, intervalTime);
-    }
+    startSlideInterval();
   </script>
 </body>
 
