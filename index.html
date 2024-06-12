@@ -105,13 +105,6 @@
         transform: translateX(600px);
       }
     }
-
-    /* Estilos para pantalla completa */
-    .fullscreen-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
   </style>
 </head>
 
@@ -189,51 +182,6 @@
       const img = slide.querySelector("img");
       img.addEventListener("mouseenter", stopSlideInterval);
       img.addEventListener("mouseleave", startSlideInterval);
-
-      // Función para abrir la imagen en pantalla completa
-      const openFullscreen = (element) => {
-        if (element.requestFullscreen) {
-          element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) { // Firefox
-          element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) { // Chrome, Safari y Opera
-          element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) { // IE/Edge
-          element.msRequestFullscreen();
-        }
-
-        // Agregar clase para estilos de pantalla completa
-        element.classList.add('fullscreen-img');
-      };
-
-      img.addEventListener("click", () => {
-        openFullscreen(img);
-      });
-
-      // Remover clase fullscreen-img cuando se sale del modo pantalla completa
-      document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-          img.classList.remove('fullscreen-img');
-        }
-      });
-
-      document.addEventListener('mozfullscreenchange', () => {
-        if (!document.mozFullScreenElement) {
-          img.classList.remove('fullscreen-img');
-        }
-      });
-
-      document.addEventListener('webkitfullscreenchange', () => {
-        if (!document.webkitFullscreenElement) {
-          img.classList.remove('fullscreen-img');
-        }
-      });
-
-      document.addEventListener('msfullscreenchange', () => {
-        if (!document.msFullscreenElement) {
-          img.classList.remove('fullscreen-img');
-        }
-      });
     });
 
     startSlideInterval();
